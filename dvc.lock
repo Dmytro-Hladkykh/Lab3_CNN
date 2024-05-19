@@ -1,0 +1,57 @@
+schema: '2.0'
+stages:
+  download_data:
+    cmd: python download_data.py
+    deps:
+    - path: download_data.py
+      hash: md5
+      md5: 29c7907ce9dccfc8b65062e89c126078
+      size: 3279
+    - path: params.yaml
+      hash: md5
+      md5: 0afa275aa95954efaffaf1bbf931754e
+      size: 114
+    outs:
+    - path: data/batches
+      hash: md5
+      md5: 98d0d4677247ee3b0395c25e36a29d55.dir
+      size: 114087200
+      nfiles: 50001
+    - path: data/dataset_files
+      hash: md5
+      md5: 64f19dfb0b3c2ba175e30524466e87da.dir
+      size: 114087200
+      nfiles: 50001
+  train:
+    cmd: python train.py
+    deps:
+    - path: config.py
+      hash: md5
+      md5: 16d08575c79f373510ea49dd2589507a
+      size: 374
+    - path: data.py
+      hash: md5
+      md5: d6253b50dbb5ad3cbb2ac653805ddb29
+      size: 3020
+    - path: data/dataset_files
+      hash: md5
+      md5: 41e5e11ab30e21c21fe6c7f103975af4.dir
+      size: 113687200
+      nfiles: 50001
+    - path: model.py
+      hash: md5
+      md5: af5d9ece745b949145bebf6ad7a8dce0
+      size: 389
+    - path: params.yaml
+      hash: md5
+      md5: 0afa275aa95954efaffaf1bbf931754e
+      size: 114
+    - path: train.py
+      hash: md5
+      md5: 31f0bf0b515e0ef6a3ee89c5e676b679
+      size: 1066
+    outs:
+    - path: trained_model.pth
+      hash: md5
+      md5: 8408bdb5177dffcfb5edbfe23ceea515
+      size: 94436426
