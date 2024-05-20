@@ -8,5 +8,6 @@ class Config:
         self.model_path = "trained_model.pth"
         self.num_batches = 5  
         self.combination_method = "physical"  
-        self.selected_batches = [1, 2, 3, 4, 5]
-        self.data_dir = "data/dataset_files"  # Добавьте эту строку
+        self.selected_batches = [1, 2, 3, 4, 5] 
+        self.data_dir = "data"
+        self.fixed_test_indices = list(range(7500))  

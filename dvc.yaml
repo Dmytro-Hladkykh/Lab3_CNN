@@ -5,7 +5,6 @@ stages:
       - download_data.py
       - params.yaml
     outs:
-      - data/dataset_files
       - data/batches
 
   train:
@@ -16,7 +15,6 @@ stages:
       - model.py
       - config.py
       - params.yaml
-      - data/dataset_files
     outs:
       - trained_model.pth
 

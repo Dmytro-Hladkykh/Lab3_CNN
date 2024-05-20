@@ -1,13 +1,23 @@
+# train_utils.py
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
-from data import collate_fn
+from utils import setup_logger, plot_training_curves
+
+logger = setup_logger()
 
 def train_epoch(model, data_loader, criterion, optimizer, device):
     model.train()
     running_loss = 0.0
-    for images, labels in data_loader:
+    total_samples = 0
+    skipped_batches = 0
+    for i, (images, labels) in enumerate(data_loader):
+        if images is None or labels is None:
+            logger.warning(f"Skipping empty batch {i}: images or labels are None")
+            skipped_batches += 1
+            continue  
+        logger.debug(f"Processing batch {i}")
         images = images.to(device)
         labels = labels.to(device)
         optimizer.zero_grad()
@@ -15,24 +25,34 @@ def train_epoch(model, data_loader, criterion, optimizer, device):
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
-        running_loss += loss.item()
-    return running_loss / len(data_loader)
-
+        running_loss += loss.item() * images.size(0)
+        total_samples += images.size(0)
+    logger.info(f"Skipped {skipped_batches} batches during training")
+    return running_loss / total_samples if total_samples > 0 else 0
 
 def validate_model(model, data_loader, criterion, device):
     model.eval()
     running_loss = 0.0
     running_corrects = 0
+    total_samples = 0
+    skipped_batches = 0
     with torch.no_grad():
-        for images, labels in data_loader:
+        for i, (images, labels) in enumerate(data_loader):
+            if images is None or labels is None:
+                logger.warning(f"Skipping empty batch {i}: images or labels are None")
+                skipped_batches += 1
+                continue  
+            logger.debug(f"Processing batch {i}")
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             loss = criterion(outputs, labels)
             preds = torch.argmax(outputs, dim=1)
             running_loss += loss.item() * images.size(0)
             running_corrects += torch.sum(preds == labels.data)
-    val_loss = running_loss / len(data_loader.dataset)
-    val_acc = running_corrects / len(data_loader.dataset)
+            total_samples += images.size(0)
+    logger.info(f"Skipped {skipped_batches} batches during validation")
+    val_loss = running_loss / total_samples if total_samples > 0 else 0
+    val_acc = running_corrects / total_samples if total_samples > 0 else 0
     return val_loss, val_acc
 
 def early_stopping(val_loss, best_val_loss, patience, counter):

@@ -4,6 +4,7 @@ from torchvision import datasets, transforms
 from torch.utils.data import Dataset, DataLoader
 from PIL import Image
 import logging
+import pickle
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,7 @@ class CustomDataset(Dataset):
     def __init__(self, data_dir, label_file):
         self.data_dir = data_dir
         self.label_file = label_file
-        self.image_files, self.labels, self.classes = self.load_data()
+        self.image_files, self.labels = self.load_data()
         self.transform = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
@@ -23,35 +24,34 @@ class CustomDataset(Dataset):
     def load_data(self):
         image_files = []
         labels = {}
-        classes = []
         with open(self.label_file, "r") as f:
             for line in f:
                 filename, label = line.strip().split(",")
                 image_path = os.path.join(self.data_dir, "images", filename)
-                if not os.path.exists(image_path):
-                    print(f"Image file not found: {image_path}")
-                    continue
-                image_files.append(image_path)
-                labels[filename] = label
-                if label not in classes:
-                    classes.append(label)
-        return image_files, labels, classes
+                if os.path.exists(image_path):
+                    image_files.append(image_path)
+                    labels[filename] = label
+                else:
+                    logger.warning(f"Image file not found: {image_path}")
+        return image_files, labels
 
     def __len__(self):
         return len(self.image_files)
 
     def __getitem__(self, idx):
         img_path = self.image_files[idx]
-        print(f"Processing image: {img_path}")
+        logger.debug(f"Attempting to load image: {img_path}")
         try:
             image = Image.open(img_path)
+            logger.debug(f"Successfully loaded image: {img_path}")
         except Exception as e:
-            print(f"Error reading image: {e}")
-            return None, None
+            logger.warning(f"Error reading image {img_path}: {e}")
+            return None, None  
+        
         image = self.transform(image)
         filename = os.path.basename(img_path)
         label = self.labels[filename]
-        label = label_to_idx[label]  # Convert label to numerical value
+        label = label_to_idx[label]  
         return image, label
 
 def get_data_loaders(config):
@@ -60,13 +60,32 @@ def get_data_loaders(config):
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
 
-    train_dataset = CustomDataset(data_dir=config.data_dir, label_file="data/dataset_files/data_registry_table.txt")
-    train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True)
+    train_datasets = []
+    val_datasets = []
+    test_datasets = []
 
-    val_dataset = CustomDataset(data_dir=config.data_dir, label_file="data/dataset_files/data_registry_table.txt")
+    for batch_id in config.selected_batches:
+        batch_dir = os.path.join("data", "batches", f"batch_{batch_id}")
+        label_file = os.path.join(batch_dir, "batch_registry_table.txt")
+        train_dataset = CustomDataset(data_dir=batch_dir, label_file=label_file)
+        val_dataset = CustomDataset(data_dir=batch_dir, label_file=label_file)
+        test_dataset = CustomDataset(data_dir=batch_dir, label_file=label_file)
+        train_datasets.append(train_dataset)
+        val_datasets.append(val_dataset)
+        test_datasets.append(test_dataset)
+
+    train_dataset = torch.utils.data.ConcatDataset(train_datasets)
+    val_dataset = torch.utils.data.ConcatDataset(val_datasets)
+
+    train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=config.batch_size, shuffle=False)
 
-    test_dataset = CustomDataset(data_dir=config.data_dir, label_file="data/dataset_files/data_registry_table.txt")
+    with open(os.path.join(config.data_dir, "test_batch"), "rb") as f:
+        test_dataset = pickle.load(f, encoding="bytes")
+
+    test_dataset = [(torch.from_numpy(img), label) for img, label in zip(test_dataset[b"data"], test_dataset[b"labels"])]
+    test_dataset = [(transform(Image.fromarray(img)), label) for img, label in test_dataset]
+
     test_loader = DataLoader(test_dataset, batch_size=config.batch_size, shuffle=False)
 
     return train_loader, val_loader, test_loader
@@ -76,16 +95,17 @@ def collate_fn(batch):
     labels = []
     for image, label in batch:
         if image is not None and label is not None:
-            images.append(image)
-            labels.append(label_to_idx[label])  # Convert label to numerical value
-    if not images:
-        return None, None  # Return None, None for an empty batch
-    
-    # Convert images to tensors
-    images = torch.stack(images)
-    
-    # Convert labels to tensors and ensure they are of type long
-    labels = torch.tensor(labels, dtype=torch.long)
-    
-    return images, labels
+            if label in label_to_idx:
+                images.append(image)
+                labels.append(label_to_idx[label])
+            else:
+                logger.warning(f"Skipping image with unknown label: {label}")
 
+    if not images:
+        return None, None  
+
+    images = torch.stack(images)
+
+    labels = torch.tensor(labels, dtype=torch.long)
+
+    return images, labels
