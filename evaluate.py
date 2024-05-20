@@ -1,18 +1,23 @@
 import torch
-from data import get_data_loaders
+import json
 from model import ResNet50
 from utils import setup_logger
-import json
+from data import CustomDataset
+from torch.utils.data import DataLoader
+import os
 
 def evaluate_model(config):
     logger = setup_logger()
-
-    _, _, test_loader = get_data_loaders(config)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = ResNet50().to(device)
     model.load_state_dict(torch.load(config.model_path))
     model.eval()
+
+    test_batch_dir = os.path.join(config.data_dir, "batches", "test_batch")
+    test_label_file = os.path.join(test_batch_dir, "batch_registry_table.txt")
+    test_dataset = CustomDataset(data_dir=test_batch_dir, label_file=test_label_file)
+    test_loader = DataLoader(test_dataset, batch_size=config.batch_size, shuffle=False)
 
     correct = 0
     total = 0

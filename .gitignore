@@ -32,3 +32,4 @@ combined_batches_1-2-3-4/
 combined_batches_2-3-4-5/
 combined_batches_1-2-3-4-5/
 /trained_model.pth
+/metrics.json

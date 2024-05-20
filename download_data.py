@@ -3,6 +3,7 @@ import shutil
 from torchvision import datasets, transforms
 from PIL import Image
 from utils import setup_logger
+import pickle
 
 logger = setup_logger()
 
@@ -23,10 +24,21 @@ def split_dataset_into_batches(dataset, num_batches, batch_dir):
                     f.write(f"img_{i}.png,{dataset.classes[label]}\n")
 
 def download_data(config, root):
-    cifar10 = datasets.CIFAR10(root=root, train=True, download=True, transform=transforms.ToTensor())
+    cifar10_train = datasets.CIFAR10(root=root, train=True, download=True, transform=transforms.ToTensor())
+    cifar10_test = datasets.CIFAR10(root=root, train=False, download=True, transform=transforms.ToTensor())
 
     batch_dir = os.path.join(root, "batches")
-    split_dataset_into_batches(cifar10, config.num_batches, batch_dir)
+    split_dataset_into_batches(cifar10_train, config.num_batches, batch_dir)
+
+    test_batch_dir = os.path.join(root, "batches", "test_batch")
+    os.makedirs(os.path.join(test_batch_dir, "images"), exist_ok=True)  # Создание каталога для изображений
+
+    test_label_file = os.path.join(test_batch_dir, "batch_registry_table.txt")
+    with open(test_label_file, "w") as f:
+        for i, (img, label) in enumerate(cifar10_test):
+            img_path = os.path.join(test_batch_dir, "images", f"img_{i}.png")
+            Image.fromarray(img.mul(255).permute(1, 2, 0).byte().numpy()).save(img_path)
+            f.write(f"img_{i}.png,{cifar10_test.classes[label]}\n")
 
 if __name__ == "__main__":
     from config import Config

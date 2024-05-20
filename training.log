@@ -284,3 +284,50 @@
 2024-05-20 05:38:12,764 - utils - INFO - Splitting dataset into 5 batches and saving to data\batches
 2024-05-20 05:44:09,734 - utils - INFO - Splitting dataset into 5 batches and saving to data\batches
 2024-05-20 05:51:55,448 - utils - INFO - Splitting dataset into 5 batches and saving to data\batches
+2024-05-20 06:03:50,271 - utils - INFO - Splitting dataset into 5 batches and saving to data\batches
+2024-05-20 06:04:34,359 - utils - INFO - Extracting test batch and saving to data\batches\test_batch
+2024-05-20 07:11:11,051 - utils - INFO - Splitting dataset into 5 batches and saving to data\batches
+2024-05-20 07:13:46,868 - utils - INFO - Splitting dataset into 5 batches and saving to data\batches
+2024-05-20 07:16:54,229 - utils - INFO - Splitting dataset into 5 batches and saving to data\batches
+2024-05-20 13:12:19,388 - utils - INFO - Splitting dataset into 5 batches and saving to data\batches
+2024-05-20 13:49:46,141 - utils - INFO - Epoch 1/10:
+2024-05-20 14:01:45,669 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:02:02,260 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:02:02,260 - utils - INFO - Train Loss: 1.0533, Val Loss: 0.6747, Val Acc: 0.7642
+2024-05-20 14:02:02,261 - utils - INFO - Epoch 2/10:
+2024-05-20 14:02:29,360 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:02:45,935 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:02:45,936 - utils - INFO - Train Loss: 0.7552, Val Loss: 0.5098, Val Acc: 0.8277
+2024-05-20 14:02:45,936 - utils - INFO - Epoch 3/10:
+2024-05-20 14:03:12,896 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:03:29,772 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:03:29,772 - utils - INFO - Train Loss: 0.6082, Val Loss: 0.4259, Val Acc: 0.8548
+2024-05-20 14:03:29,772 - utils - INFO - Epoch 4/10:
+2024-05-20 14:03:56,621 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:04:13,068 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:04:13,068 - utils - INFO - Train Loss: 0.5481, Val Loss: 0.4006, Val Acc: 0.8641
+2024-05-20 14:04:13,068 - utils - INFO - Epoch 5/10:
+2024-05-20 14:04:40,120 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:04:56,795 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:04:56,795 - utils - INFO - Train Loss: 0.3940, Val Loss: 0.3066, Val Acc: 0.8974
+2024-05-20 14:04:56,795 - utils - INFO - Epoch 6/10:
+2024-05-20 14:05:23,992 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:05:40,441 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:05:40,442 - utils - INFO - Train Loss: 0.5607, Val Loss: 0.4048, Val Acc: 0.8617
+2024-05-20 14:05:40,442 - utils - INFO - Epoch 7/10:
+2024-05-20 14:06:07,675 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:06:24,385 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:06:24,385 - utils - INFO - Train Loss: 0.5009, Val Loss: 0.2178, Val Acc: 0.9274
+2024-05-20 14:06:24,385 - utils - INFO - Epoch 8/10:
+2024-05-20 14:06:51,311 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:07:08,028 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:07:08,029 - utils - INFO - Train Loss: 0.4042, Val Loss: 0.1954, Val Acc: 0.9361
+2024-05-20 14:07:08,029 - utils - INFO - Epoch 9/10:
+2024-05-20 14:07:35,013 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:07:51,867 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:07:51,867 - utils - INFO - Train Loss: 0.2628, Val Loss: 0.1455, Val Acc: 0.9512
+2024-05-20 14:07:51,867 - utils - INFO - Epoch 10/10:
+2024-05-20 14:08:19,301 - utils - INFO - Skipped 0 batches during training
+2024-05-20 14:08:36,125 - utils - INFO - Skipped 0 batches during validation
+2024-05-20 14:08:36,125 - utils - INFO - Train Loss: 0.1924, Val Loss: 0.1187, Val Acc: 0.9602
+2024-05-20 14:11:55,338 - utils - INFO - Test Accuracy: 0.8164

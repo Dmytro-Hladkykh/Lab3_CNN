@@ -25,5 +25,7 @@ stages:
       - data.py
       - trained_model.pth
       - params.yaml
+      - data/batches/test_batch
     metrics:
       - metrics.json
+

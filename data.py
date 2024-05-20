@@ -69,23 +69,17 @@ def get_data_loaders(config):
         label_file = os.path.join(batch_dir, "batch_registry_table.txt")
         train_dataset = CustomDataset(data_dir=batch_dir, label_file=label_file)
         val_dataset = CustomDataset(data_dir=batch_dir, label_file=label_file)
-        test_dataset = CustomDataset(data_dir=batch_dir, label_file=label_file)
         train_datasets.append(train_dataset)
         val_datasets.append(val_dataset)
-        test_datasets.append(test_dataset)
 
     train_dataset = torch.utils.data.ConcatDataset(train_datasets)
     val_dataset = torch.utils.data.ConcatDataset(val_datasets)
 
+    test_label_file = os.path.join(config.test_batch_dir, "batch_registry_table.txt")
+    test_dataset = CustomDataset(data_dir=config.test_batch_dir, label_file=test_label_file)
+    
     train_loader = DataLoader(train_dataset, batch_size=config.batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=config.batch_size, shuffle=False)
-
-    with open(os.path.join(config.data_dir, "test_batch"), "rb") as f:
-        test_dataset = pickle.load(f, encoding="bytes")
-
-    test_dataset = [(torch.from_numpy(img), label) for img, label in zip(test_dataset[b"data"], test_dataset[b"labels"])]
-    test_dataset = [(transform(Image.fromarray(img)), label) for img, label in test_dataset]
-
     test_loader = DataLoader(test_dataset, batch_size=config.batch_size, shuffle=False)
 
     return train_loader, val_loader, test_loader
