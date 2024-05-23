@@ -1,5 +1,6 @@
 import torch
 import json
+import mlflow
 from model import ResNet50
 from utils import setup_logger
 from data import CustomDataset
@@ -34,6 +35,8 @@ def evaluate_model(config):
 
     with open("metrics.json", "w") as f:
         json.dump({"accuracy": accuracy}, f)
+    
+    mlflow.log_metric("test_accuracy", accuracy)
 
 if __name__ == "__main__":
     from config import Config
